@@ -205,6 +205,12 @@ export default function Home() {
   const cardBackgroundRef = useRef<HTMLInputElement>(null);
   const cardSvgRef = useRef<SVGSVGElement>(null);
 
+  const showTimelineForType = (type: NoteType) => {
+    setFilter(type);
+    setView("timeline");
+    window.scrollTo(0, 0);
+  };
+
   useEffect(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
@@ -601,7 +607,7 @@ export default function Home() {
       {view === "month" && <section className="inner-page report">
         <div className="report-tools"><button className="back" onClick={() => setView("home")}>← 返回</button><select value={selectedMonth} onChange={(e) => setSelectedMonth(e.target.value)}>{availableMonths.map((key) => { const [y,m] = key.split("-").map(Number); return <option key={key} value={key}>{y} 年 {monthNames[m-1]}</option>})}</select></div>
         <div className="report-head"><span>{monthLabel}</span><h1>拾光小结</h1><p>{monthRecords.length ? `这个月，你认真接住了 ${monthRecords.length} 个发光的时刻。` : "这个月还在等待第一片微光。"}</p></div>
-        <div className="stats">{choices.map((c) => <div key={c.type}><b>{counts[c.type]}</b><span>{c.title}</span></div>)}</div>
+        <div className="stats">{choices.map((c) => <button type="button" key={c.type} onClick={() => showTimelineForType(c.type)} aria-label={`查看${c.title}记录`}><b>{counts[c.type]}</b><span>{c.title}</span><small>查看记录 →</small></button>)}</div>
         {monthRecords.length ? <><blockquote>“{inspiration?.text}”<small>{inspiration?.type === "启发" ? "本月最触动你的话" : "本月留下的第一片光"}</small></blockquote><div className="letter"><span>写给{monthLabel}的你</span><p>你留下了 {counts["灵感"]} 个念头、{counts["启发"]} 次触动，也认真看见了自己与他人的善意。零散的片刻正在这里慢慢连成你的故事。</p></div></> : <div className="empty compact"><p>每一次记录，都会成为月末回望自己的线索。</p><button onClick={() => setView("home")}>收集第一片微光</button></div>}
       </section>}
 
